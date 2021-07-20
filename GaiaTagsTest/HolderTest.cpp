@@ -14,16 +14,8 @@ TEST(HolderTest, Basic)
     holder.RemoveTag("SampleTag");
     EXPECT_FALSE(holder.HasTag("SampleTag"));
 
-    holder.AddTag("ValueTag", 3);
-    EXPECT_EQ(holder.GetTagValue<int>("ValueTag"), 3);
-    EXPECT_TRUE(holder.GetTag("ValueTag").has_value());
-    EXPECT_TRUE(holder.GetTag("ValueTag", 3).has_value());
-    EXPECT_FALSE(holder.GetTag("ValueTag2", 3).has_value());
-    EXPECT_FALSE(holder.GetTag("ValueTag", 4).has_value());
-
-    holder.AddTag({"SampleTag1", "SampleTag2", "SampleTag3"});
-    holder.AddTags("SampleTag4", "SampleTag5", "SampleTag6");
-    for (const auto& tag : holder.GetTagNames())
+    holder.AddTags({"SampleTag1", "SampleTag2", "SampleTag3"});
+    for (const auto& tag : holder.GetTags())
     {
         std::cout << tag << " ";
     }
