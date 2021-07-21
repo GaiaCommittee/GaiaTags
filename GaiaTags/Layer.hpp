@@ -44,7 +44,7 @@ namespace Gaia::Tags
                                            const std::unordered_set<std::string>& without_tags);
         /**
          * @brief Filter the holders with the given condition lambda function.
-         * @param condition Condition used to found desired holders.
+         * @param condition Condition used to found desired holders, will keep true condition holders.
          * @return Holders that satisfy the condition.
          * @details Returns an empty set if the condition is empty.
          */
