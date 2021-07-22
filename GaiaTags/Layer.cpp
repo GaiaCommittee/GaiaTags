@@ -118,4 +118,11 @@ namespace Gaia::Tags
     /// Move constructor.
     Layer::Layer(Layer &&target) noexcept : Holders(std::move(target.Holders))
     {}
+
+    /// Clear all holders.
+    void Layer::ClearHolders()
+    {
+        std::unique_lock lock(HoldersMutex);
+        Holders.clear();
+    }
 }
