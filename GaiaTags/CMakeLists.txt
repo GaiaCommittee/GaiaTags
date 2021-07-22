@@ -8,18 +8,14 @@ cmake_minimum_required(VERSION 3.10)
 # Project Settings
 #==============================
 
+set(TARGET_NAME "Tags")
+set(TARGET_NAMESPACE "Gaia")
+set(TARGET_VERSION 0.9.0)
+
 if (NOT PROJECT_DECLARED)
-    project("Gaia Tags" LANGUAGES CXX VERSION 0.9)
+    project("${TARGET_NAMESPACE} ${TARGET_NAME}" LANGUAGES CXX VERSION ${TARGET_VERSION})
     set(PROJECT_DECLARED)
 endif()
-
-#==============================
-# Unit Settings
-#==============================
-
-set(TARGET_NAME "GaiaTags")
-set(TARGET_VERSION 0.9.0)
-set(INSTALL_NAMESPACE "Gaia")
 
 #==============================
 # Command Lines
@@ -27,40 +23,14 @@ set(INSTALL_NAMESPACE "Gaia")
 
 set(CMAKE_CXX_STANDARD 17)
 
-#==============================
-# Source
-#==============================
-
-# Macro which is used to find .cpp files recursively.
-macro(find_cpp path list_name)
-    file(GLOB_RECURSE _tmp_list RELATIVE ${path} ${path}/*.cpp)
-    set(${list_name})
-    foreach(f ${_tmp_list})
-        if(NOT f MATCHES "cmake-*")
-            list(APPEND ${list_name} ${f})
-        endif()
-    endforeach()
-endmacro()
-
-# Macro which is used to find .hpp files recursively.
-macro(find_hpp path list_name)
-    file(GLOB_RECURSE _tmp_list RELATIVE ${path} ${path}/*.hpp)
-    set(${list_name})
-    foreach(f ${_tmp_list})
-        if(NOT f MATCHES "cmake-*")
-            list(APPEND ${list_name} ${f})
-        endif()
-    endforeach()
-endmacro()
-
 #------------------------------
 # C++
 #------------------------------
 
 # C++ Source Files
-find_cpp(${CMAKE_CURRENT_SOURCE_DIR} TARGET_SOURCE)
+FILE(GLOB_RECURSE TARGET_SOURCE *.cpp)
 # C++ Header Files
-find_hpp(${CMAKE_CURRENT_SOURCE_DIR} TARGET_HEADER)
+FILE(GLOB_RECURSE TARGET_HEADER *.hpp)
 
 #==============================
 # Compile Targets
@@ -69,7 +39,10 @@ find_hpp(${CMAKE_CURRENT_SOURCE_DIR} TARGET_HEADER)
 add_library(${TARGET_NAME} SHARED ${TARGET_SOURCE} ${TARGET_HEADER})
 
 # Set version property.
-set_target_properties(${TARGET_NAME} PROPERTIES VERSION ${TARGET_VERSION})
+set_target_properties(${TARGET_NAME} PROPERTIES
+        VERSION ${TARGET_VERSION}
+        OUTPUT_NAME ${TARGET_NAMESPACE}${TARGET_NAME}
+        DEBUG_POSTFIX "d")
 
 # Enable 'DEBUG' Macro in Debug Mode
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
@@ -79,12 +52,6 @@ endif()
 #==============================
 # Dependencies
 #==============================
-
-# TBB
-find_path(TBB_INCLUDE "tbb/tbb.h")
-find_library(TBB_LIB "libtbb.so")
-target_include_directories(${TARGET_NAME} PRIVATE ${TBB_INCLUDE})
-target_link_libraries(${TARGET_NAME} PRIVATE ${TBB_LIB})
 
 # In Linux, 'Threads' need to explicitly linked.
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
@@ -97,20 +64,37 @@ endif()
 # Install Scripts
 #===============================
 
-configure_file(
-        "${PROJECT_SOURCE_DIR}/${TARGET_NAME}Config.hpp.in"
-        "${PROJECT_BINARY_DIR}/${TARGET_NAME}Config.hpp")
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include(CMakePackageConfigHelpers)
+
+configure_file(PackageVersion.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAMESPACE}${TARGET_NAME}Version.hpp)
+
+set(CONFIG_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/lib/cmake/${TARGET_NAMESPACE}${TARGET_NAME})
+
+configure_package_config_file(
+        PackageConfig.cmake.in "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAMESPACE}${TARGET_NAME}Config.cmake"
+        INSTALL_DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/${TARGET_NAMESPACE}${TARGET_NAME}
+        PATH_VARS TARGET_NAMESPACE TARGET_NAME CONFIG_INSTALL_PATH)
+
+write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAMESPACE}${TARGET_NAME}ConfigVersion.cmake
+        VERSION ${TARGET_VERSION}
+        COMPATIBILITY SameMinorVersion)
 
 # Install executable files and libraries to 'default_path/'.
 install(TARGETS ${TARGET_NAME}
-        EXPORT ${TARGET_NAME}-targets
+        EXPORT ${TARGET_NAMESPACE}${TARGET_NAME}Targets
         RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
         LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib
         ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-# Install header files to 'default_path/TARGET_NAME/'
-install(DIRECTORY "." DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${TARGET_NAME}/ FILES_MATCHING PATTERN "*.hpp")
-install(EXPORT ${TARGET_NAME}-targets
-        NAMESPACE ${INSTALL_NAMESPACE}::
-        FILE ${TARGET_NAME}Config.cmake
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/${TARGET_NAME})
+install(DIRECTORY "." DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${TARGET_NAMESPACE}${TARGET_NAME}/ FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY "." DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${TARGET_NAMESPACE}${TARGET_NAME}/ FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "." DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${TARGET_NAMESPACE}${TARGET_NAME}/ FILES_MATCHING PATTERN "*.cuh")
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAMESPACE}${TARGET_NAME}Version.hpp
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/${TARGET_NAMESPACE}${TARGET_NAME}/)
+install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAMESPACE}${TARGET_NAME}Config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${TARGET_NAMESPACE}${TARGET_NAME}ConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/${TARGET_NAMESPACE}${TARGET_NAME})
+install(EXPORT ${TARGET_NAMESPACE}${TARGET_NAME}Targets
+        NAMESPACE ${TARGET_NAMESPACE}::
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/cmake/${TARGET_NAMESPACE}${TARGET_NAME})
