@@ -20,6 +20,14 @@ namespace Gaia::Tags
         std::unordered_set<Holder*> Holders;
 
     public:
+        /// Make destructor virtual.
+        virtual ~Layer() = default;
+
+        /// Copy constructor.
+        Layer(const Layer& target);
+        /// Move constructor.
+        Layer(Layer&& target) noexcept;
+
         /// Add a Holder into this layer.
         void AddHolder(Holder* holder);
 

@@ -110,4 +110,12 @@ namespace Gaia::Tags
         }
         return result;
     }
+
+    /// Copy constructor.
+    Layer::Layer(const Layer &target) : Holders(target.Holders)
+    {}
+
+    /// Move constructor.
+    Layer::Layer(Layer &&target) noexcept : Holders(std::move(target.Holders))
+    {}
 }

@@ -19,6 +19,14 @@ namespace Gaia::Tags
         std::unordered_set<std::string> Tags;
 
     public:
+        // Make destructor virtual.
+        virtual ~Holder() = default;
+
+        /// Copy constructor.
+        Holder(const Holder& target);
+        /// Move constructor.
+        Holder(Holder&& target) noexcept;
+
         /// Get all tags of this holder.
         [[nodiscard]] inline const decltype(Tags)& GetTags() const noexcept
         {

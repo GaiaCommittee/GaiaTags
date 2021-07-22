@@ -58,4 +58,12 @@ namespace Gaia::Tags
         for (const auto& tag : tags)
             Tags.erase(tag);
     }
+
+    /// Copy constructor.
+    Holder::Holder(const Holder &target) : Tags(target.Tags)
+    {}
+
+    /// Move constructor.
+    Holder::Holder(Holder &&target) noexcept : Tags(std::move(target.Tags))
+    {}
 }
