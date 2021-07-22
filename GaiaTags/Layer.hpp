@@ -33,7 +33,7 @@ namespace Gaia::Tags
         void RemoveHolders(const std::unordered_set<Holder *> &holders);
 
         /// Get all holders in this layer.
-        [[nodiscard]] inline const std::unordered_set<Holder*>& GetHolder() const noexcept
+        [[nodiscard]] inline const std::unordered_set<Holder*>& GetHolders() const noexcept
         {
             return Holders;
         }
