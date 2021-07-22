@@ -32,6 +32,12 @@ namespace Gaia::Tags
         /// Remove holders from this layer.
         void RemoveHolders(const std::unordered_set<Holder *> &holders);
 
+        /// Get all holders in this layer.
+        [[nodiscard]] inline const std::unordered_set<Holder*>& GetHolder() const noexcept
+        {
+            return Holders;
+        }
+
         /// Found all holders that has the given tag.
         std::unordered_set<Holder*> Filter(const std::string& tag);
         /**
