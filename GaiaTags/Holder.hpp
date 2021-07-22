@@ -22,6 +22,8 @@ namespace Gaia::Tags
         // Make destructor virtual.
         virtual ~Holder() = default;
 
+        /// Default constructor.
+        Holder() = default;
         /// Copy constructor.
         Holder(const Holder& target);
         /// Move constructor.

@@ -23,6 +23,8 @@ namespace Gaia::Tags
         /// Make destructor virtual.
         virtual ~Layer() = default;
 
+        // Default constructor.
+        Layer() = default;
         /// Copy constructor.
         Layer(const Layer& target);
         /// Move constructor.
