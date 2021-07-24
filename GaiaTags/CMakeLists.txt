@@ -53,6 +53,12 @@ endif()
 # Dependencies
 #==============================
 
+# TBB
+find_path(TBB_INCLUDE "tbb/tbb.h")
+find_library(TBB_LIB "libtbb.so")
+target_include_directories(${TARGET_NAME} PRIVATE ${TBB_INCLUDE})
+target_link_libraries(${TARGET_NAME} PRIVATE ${TBB_LIB})
+
 # In Linux, 'Threads' need to explicitly linked.
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     find_package(Threads)

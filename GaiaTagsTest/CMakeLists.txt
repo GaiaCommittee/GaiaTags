@@ -78,7 +78,7 @@ endif()
 
 # Gaia Tags
 target_include_directories(${TARGET_NAME} PUBLIC "../")
-target_link_libraries(${TARGET_NAME} PUBLIC "GaiaTags")
+target_link_libraries(${TARGET_NAME} PUBLIC "Tags")
 
 # GTest
 find_package(GTest REQUIRED)
