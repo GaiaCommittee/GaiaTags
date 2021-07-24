@@ -1,17 +1,17 @@
-#include "Layer.hpp"
+#include "Index.hpp"
 #include <tbb/tbb.h>
 
 namespace Gaia::Tags
 {
     /// Add a Holder into this layer.
-    void Layer::AddHolder(Holder *holder)
+    void Index::AddHolder(Holder *holder)
     {
         std::shared_lock lock(HoldersMutex);
         Holders.emplace(holder);
     }
 
     /// Add holders into this layer.
-    void Layer::AddHolders(const std::unordered_set<Holder *> &holders)
+    void Index::AddHolders(const std::unordered_set<Holder *> &holders)
     {
         std::unique_lock lock(HoldersMutex);
         for (auto* holder : holders)
@@ -21,14 +21,14 @@ namespace Gaia::Tags
     }
 
     /// Remove the given holder from this layer.
-    void Layer::RemoveHolder(Holder *holder)
+    void Index::RemoveHolder(Holder *holder)
     {
         std::unique_lock lock(HoldersMutex);
         Holders.erase(holder);
     }
 
     /// Remove holders from this layer.
-    void Layer::RemoveHolders(const std::unordered_set<Holder *> &holders)
+    void Index::RemoveHolders(const std::unordered_set<Holder *> &holders)
     {
         std::unique_lock lock(HoldersMutex);
         for (auto* holder : holders)
@@ -38,7 +38,7 @@ namespace Gaia::Tags
     }
 
     /// Found all holders that has the given tag.
-    std::unordered_set<Holder *> Layer::Filter(const std::string &tag)
+    std::unordered_set<Holder *> Index::Filter(const std::string &tag)
     {
         tbb::concurrent_queue<Holder *> filtered_holders;
 
@@ -62,7 +62,7 @@ namespace Gaia::Tags
 
     /// Found all holders that satisfy the condition.
     std::unordered_set<Holder *>
-    Layer::Filter(const std::unordered_set<std::string> &with_tags, const std::unordered_set<std::string> &without_tags)
+    Index::Filter(const std::unordered_set<std::string> &with_tags, const std::unordered_set<std::string> &without_tags)
     {
         tbb::concurrent_queue<Holder *> filtered_holders;
 
@@ -86,7 +86,7 @@ namespace Gaia::Tags
     }
 
     /// Filter the holders with the given condition lambda function.
-    std::unordered_set<Holder *> Layer::Filter(const std::function<bool(Holder *)> &condition)
+    std::unordered_set<Holder *> Index::Filter(const std::function<bool(Holder *)> &condition)
     {
         if (!condition) return {};
 
@@ -112,15 +112,15 @@ namespace Gaia::Tags
     }
 
     /// Copy constructor.
-    Layer::Layer(const Layer &target) : Holders(target.Holders)
+    Index::Index(const Index &target) : Holders(target.Holders)
     {}
 
     /// Move constructor.
-    Layer::Layer(Layer &&target) noexcept : Holders(std::move(target.Holders))
+    Index::Index(Index &&target) noexcept : Holders(std::move(target.Holders))
     {}
 
     /// Clear all holders.
-    void Layer::ClearHolders()
+    void Index::ClearHolders()
     {
         std::unique_lock lock(HoldersMutex);
         Holders.clear();

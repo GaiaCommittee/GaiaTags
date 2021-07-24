@@ -5,7 +5,7 @@ using namespace Gaia::Tags;
 
 TEST(IndexTest, Basic)
 {
-    Layer SimpleLayer;
+    Index SimpleLayer;
     Holder sample_holder1, sample_holder2, sample_holder3;
     sample_holder1.AddTags({"SampleTag1", "SampleTag2"});
     sample_holder2.AddTags({"SampleTag2", "SampleTag3"});

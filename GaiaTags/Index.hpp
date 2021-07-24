@@ -8,10 +8,10 @@
 namespace Gaia::Tags
 {
     /**
-     * @brief Layer is a container that associate many tag holders. A tag holder can be added into
-     *        many layers, but no one of these layers will manage the memory of this holder.
+     * @brief Index is a container that associate many tag holders. A tag holder can be added into
+     *        many indexes, but no one of these indexes will manage the memory of this holder.
      */
-    class Layer
+    class Index
     {
     protected:
         /// Mutex for holders set.
@@ -21,14 +21,14 @@ namespace Gaia::Tags
 
     public:
         /// Make destructor virtual.
-        virtual ~Layer() = default;
+        virtual ~Index() = default;
 
         // Default constructor.
-        Layer() = default;
+        Index() = default;
         /// Copy constructor.
-        Layer(const Layer& target);
+        Index(const Index& target);
         /// Move constructor.
-        Layer(Layer&& target) noexcept;
+        Index(Index&& target) noexcept;
 
         /// Add a Holder into this layer.
         void AddHolder(Holder* holder);
